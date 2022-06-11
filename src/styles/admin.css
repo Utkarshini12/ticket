@@ -9,3 +9,16 @@
 .borders-b:hover {
     transform:scale(1.05);
 }
+
+.borders-y{
+    border-bottom: 5px solid darkgoldenrod;
+    border-radius: 5px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, .08) 0 6px 10px rgba(0, 0, 0, .05);
+    transition: .3 ease-in;
+    cursor:pointer;
+}
+
+.borders-y:hover {
+    transform:scale(1.05);
+}
+

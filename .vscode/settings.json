@@ -3,5 +3,8 @@
 
         "javascript": "javascriptreact"
     
-      }
+    },
+    "emmet.preferences": {
+    
+    }
 }

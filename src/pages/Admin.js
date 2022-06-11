@@ -1,12 +1,22 @@
-import React from "react";
+import React, {useState} from "react";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import Sidebar from "../component/Sidebar";
-// import MaterialTable from 'material-table'
+import {Modal} from 'react-bootstrap';
+import MaterialTable from '@material-table/core';
 
 
 import "../styles/admin.css"
 
 function Admin() {
+  const [userModal, setUserModal] = useState(false);
+  const showUserModal = () => {
+    setUserModal(true)
+  }
+  const closeUserModal = () => {
+    setUserModal(false)
+  }
+
+
   return <div className="bg-light vh-100">
 
     <div className="row">
@@ -52,7 +62,7 @@ function Admin() {
 
          <hr />
 
-         {/* <MaterialTable 
+         <MaterialTable 
          columns={[
 
           {
@@ -80,7 +90,33 @@ function Admin() {
           }
          ]}
 
-         /> */}
+         />
+
+         <button className="btn btn-primary" onClick={showUserModal}>Open Modal</button>
+
+         <Modal 
+          show={userModal}
+          onHide={closeUserModal}
+          backdrop="static"
+          centered >
+            <Modal.Header closeButton>
+              <Modal.Title>Edit Details</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <form >
+                <div className="p-1">
+                  <h5 className="text-primary">User ID :</h5>
+                  <div className="input-group">
+                    <label className="input-group-text"> Name
+                    <input type="text" className="form-control" />
+                    </label>
+                   
+                  </div>
+                </div>
+              </form>
+            </Modal.Body>
+
+          </Modal>
 
       </div>
     </div>
