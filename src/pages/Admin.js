@@ -1,19 +1,42 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import Sidebar from "../component/Sidebar";
 import {Modal} from 'react-bootstrap';
 import MaterialTable from '@material-table/core';
-
+import { ExportCsv, ExportPdf } from "@material-table/exporters";
+import { fetchTicket } from "../Api/tickets";
 
 import "../styles/admin.css"
+import { getAllUsers } from "../Api/user";
 
 function Admin() {
   const [userModal, setUserModal] = useState(false);
+  const [ticketDetails, setTicketDetails] = useState([]); 
   const showUserModal = () => {
     setUserModal(true)
   }
   const closeUserModal = () => {
     setUserModal(false)
+  }
+
+  useEffect(()=> {
+    (async ()=> {
+      fetchTickets()
+      // getAllUsers()
+    })()
+
+  }, [])
+
+  const fetchTickets = () => {
+    fetchTicket().then(function (response) {
+      if(response.status === 200) {
+        console.log(response);
+        setTicketDetails(response.data);
+      }
+    }).catch((error)=> {
+      console.log(error);
+
+    })
   }
 
 
@@ -61,36 +84,73 @@ function Admin() {
          </div>
 
          <hr />
+<div className="container">
 
-         <MaterialTable 
+<MaterialTable 
          columns={[
+          {
+            title: 'Ticket ID',
+            field: 'id'
+          },
 
           {
-            title: 'UserId',
-            field: 'userId'
+            title: 'TITLE',
+            field: 'title'
           }, 
           {
-            name: 'Name', 
-            field: 'name'
+            title: 'Description', 
+            field: 'description'
           }, 
+          {
+            title: 'Reporter', 
+            field: 'reporter'
+          }, 
+          {
+            title: 'Priority', 
+            field: 'ticketPriority'
+          },
+          {
+            title: 'Assignee', 
+            field: 'assignee'
+          },
           {
             title: "Status", 
             field: "status", 
             lookup: {
-              "APPROVED": "APPROVED", 
-              "PENDING": "PENDING", 
-              "REJECT": "REJECT"
+              "OPEN": "OPEN", 
+              "IN_PROGRESS": "IN_PROGRESS",
+              "BLOCKED": "BLOCKED", 
+              "CLOSED": "CLOSED"
             }
           }
          ]}
 
-         data={[
+         options={{
+          exportMenu: [{
+            label: 'Export Pdf', 
+            exportFunc: (cols, datas) => ExportPdf(cols, datas, 'Ticket Records')
+          }, 
           {
-            name: "Utkarshini", status: "PENDING"
+            label: 'Export Csv', 
+            exportFunc: (cols, datas) => ExportCsv(cols, datas, 'Ticket Records')
+          }, 
+        ],
+          headerStyle: {
+            backgroundColor: 'darkblue',
+            color: "#fff"
+          }, 
+          rowStyle: {
+            backgroundColor: "#eee"
           }
-         ]}
+         }}
+
+         data={ticketDetails}
+
+         title="TICKET RECORDS"
 
          />
+</div>
+        
 
          <button className="btn btn-primary" onClick={showUserModal}>Open Modal</button>
 
