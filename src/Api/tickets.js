@@ -28,17 +28,14 @@ export async function fetchTicket(data) {
     )
 }
 
-export async function ticketUpdation(id, selectedCurrTicket) {
-    return await axios.get(`${BASE_URL}/crm/api/v1/tickets/${id}`, 
-    {
+export async function ticketUpdation(id,selectedCurrTicket) {
+    return await axios.put(`${BASE_URL}/crm/api/v1/tickets/${id}`, selectedCurrTicket, {
         headers: {
-            'x-access-token': localStorage.getItem('token')
+            'x-access-token': localStorage.getItem("token")
         }
-    } , 
-    {
-        "userId" : localStorage.getItem('userId')
-    }
-    )
+    },{
+        "userId":localStorage.getItem("userId")
+    })
 }
 
 

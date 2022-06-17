@@ -1,18 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import Sidebar from "../component/Sidebar";
-import { Modal } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 import MaterialTable from '@material-table/core';
 import { ExportCsv, ExportPdf } from "@material-table/exporters";
-import { fetchTicket } from "../Api/tickets";
+import { fetchTicket, ticketUpdation } from "../Api/tickets";
 
 import "../styles/admin.css"
 import { getAllUsers } from "../Api/user";
 
 function Admin() {
   const [userModal, setUserModal] = useState(false);
-  const [ticketDetails, setTicketDetails] = useState([]);
+  const [ticketList, setTicketList] = useState([]);
   const [userDetails, setUserDetails] = useState([]);
+
+  // old values
+  const [ticketDetails, setTicketDetails] = useState({});
+  // new updated values 
+  const [selectedCurrTicket, setSelectedCurrTicket] = useState({});
+  const [ticketUpdateModal, setTicketUpdateModal] = useState(false); 
+  // {new Obj } new values user 
+  // First update with selectedCurr Ticket ==> grab the specific row  ==> CURR VALUE 
+  // Second update : replacing old values with new data ==> NEW VVALUES THAT UOU ENTERED IN MODAL 
+  
+  const updateSelectedCurrTicket = (data) => setSelectedCurrTicket(data)
+
+  const onCloseTicketModal = () => {
+    setTicketUpdateModal(false)
+  }
+
   const showUserModal = () => {
     setUserModal(true)
   }
@@ -28,11 +44,34 @@ function Admin() {
 
   }, [])
 
+
+  // user logic 
+
+
+  const fetchUsers = (userId) => {
+    getAllUsers(userId).then(function (response) {
+      if (response.status === 200) {
+        if (userId) {
+          setUserDetails(response.data);
+        } else {
+          setUserDetails(response.data);
+        }
+
+
+      }
+    }).catch((error) => {
+      console.log(error);
+
+    })
+  }
+
+  // ticket logic 
+
   const fetchTickets = () => {
     fetchTicket().then(function (response) {
       if (response.status === 200) {
         console.log(response);
-        setTicketDetails(response.data);
+        setTicketList(response.data);
       }
     }).catch((error) => {
       console.log(error);
@@ -40,21 +79,84 @@ function Admin() {
     })
   }
 
-  const fetchUsers = () => {
-    getAllUsers().then(function (response) {
-      if (response.status === 200) {
-        console.log(response);
-        setUserDetails(response.data);
-      }
-    }).catch((error) => {
-      console.log(error);
+// read the existing values
 
+  const editTicket = (ticketDetail) => {
+    const ticket = {
+      assignee: ticketDetail.assignee,
+      description: ticketDetail.description, 
+      id: ticketDetail.id,
+      reporter: ticketDetail.reporter,
+      status: ticketDetail.status, 
+      ticketPriority: ticketDetail.ticketPriority,
+      title: ticketDetail.title
+    }
+
+    console.log(ticket);
+    // storing the existing values that we grabbed in a state
+    setSelectedCurrTicket(ticket);
+    // open a modal 
+    setTicketUpdateModal(true); 
+
+
+
+
+
+  }
+
+  console.log("sdgjhd", selectedCurrTicket);
+
+
+  // read the updated value from the user 
+
+  const onTicketUpdate = (e) => {
+    if(e.target.name === "title") {
+      selectedCurrTicket.title = e.target.value
+    }
+    // else if(e.target.name === "description") {
+    //   selectedCurrTicket.description = e.target.value
+    // }
+   
+
+    // title: testing1
+    // title: Utkarshini
+
+      // create a new object wit new values ==> object.assign 
+      // (target, source) target : new values , source : destination where you want your updated values 
+    updateSelectedCurrTicket(Object.assign({}, selectedCurrTicket))
+
+  }
+
+  // call the api 
+
+  const updateTicket = (e) => {
+    e.preventDefault();
+    ticketUpdation(selectedCurrTicket.id, selectedCurrTicket).then(function (response) {
+      console.log("Ticket updated successfully");
+      onCloseTicketModal();
+    }).catch(function (error) {
+      console.log(error);
     })
   }
 
 
 
-  return <div className="bg-light vh-100">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  return <div className="bg-light min-vh-100">
 
     <div className="row">
       <div className="col-1">
@@ -101,6 +203,10 @@ function Admin() {
         <div className="container">
 
           <MaterialTable
+
+          onRowClick={(event, ticketDetail)=> editTicket(ticketDetail)}
+
+            data={ticketList}
 
             columns={[
               {
@@ -159,13 +265,44 @@ function Admin() {
               }
             }}
 
-            data={ticketDetails}
+
 
             title="TICKET RECORDS"
 
           />
 
-           <MaterialTable
+
+          {ticketUpdateModal ? (
+            <Modal
+            show={ticketUpdateModal}
+            onHide={onCloseTicketModal}
+            backdrop="static"
+            centered >
+            <Modal.Header closeButton>
+              <Modal.Title>Update Ticket</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <form onSubmit={updateTicket}>
+                <div className="p-1">
+                  <h5 className="text-primary">Ticket ID :{selectedCurrTicket.id}</h5>
+                  <div className="input-group">
+                    <label className="label input-group-text label-md"> Title 
+                      
+                    </label>
+                    <input type="text" className="form-control" name="title" value={selectedCurrTicket.title} onChange={onTicketUpdate} />
+  
+                  </div>
+                  <Button type="submit" className="my-1">Update </Button>
+                </div>
+              </form>
+            </Modal.Body>
+  
+          </Modal>
+
+          ) : ("") }
+
+          <MaterialTable
+            //  onRowClick={(rowData, userId)=> fetchUsers(rowData.userId) }
 
             columns={[
               {
@@ -181,7 +318,7 @@ function Admin() {
                 title: 'Email',
                 field: 'email'
               },
-            
+
               {
                 title: "USER Type",
                 field: "userTypes",
@@ -191,7 +328,7 @@ function Admin() {
                   "ADMIN": "ADMIN",
                   "CLOSED": "CLOSED"
                 }
-              }, 
+              },
               {
                 title: "Status",
                 field: "userStatus",
@@ -234,34 +371,12 @@ function Admin() {
 
         <hr />
 
-       
+
 
 
         <button className="btn btn-primary" onClick={showUserModal}>Open Modal</button>
 
-        <Modal
-          show={userModal}
-          onHide={closeUserModal}
-          backdrop="static"
-          centered >
-          <Modal.Header closeButton>
-            <Modal.Title>Edit Details</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <form >
-              <div className="p-1">
-                <h5 className="text-primary">User ID :</h5>
-                <div className="input-group">
-                  <label className="input-group-text"> Name
-                    <input type="text" className="form-control" />
-                  </label>
-
-                </div>
-              </div>
-            </form>
-          </Modal.Body>
-
-        </Modal>
+        
 
       </div>
     </div>
