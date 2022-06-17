@@ -28,6 +28,19 @@ export async function fetchTicket(data) {
     )
 }
 
+export async function ticketUpdation(id, selectedCurrTicket) {
+    return await axios.get(`${BASE_URL}/crm/api/v1/tickets/${id}`, 
+    {
+        headers: {
+            'x-access-token': localStorage.getItem('token')
+        }
+    } , 
+    {
+        "userId" : localStorage.getItem('userId')
+    }
+    )
+}
+
 
 
 
