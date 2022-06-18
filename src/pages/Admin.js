@@ -18,12 +18,14 @@ function Admin() {
   const [ticketDetails, setTicketDetails] = useState({});
   // new updated values 
   const [selectedCurrTicket, setSelectedCurrTicket] = useState({});
-  const [ticketUpdateModal, setTicketUpdateModal] = useState(false); 
+  const [ticketUpdateModal, setTicketUpdateModal] = useState(false);
   // {new Obj } new values user 
   // First update with selectedCurr Ticket ==> grab the specific row  ==> CURR VALUE 
   // Second update : replacing old values with new data ==> NEW VVALUES THAT UOU ENTERED IN MODAL 
-  
+
   const updateSelectedCurrTicket = (data) => setSelectedCurrTicket(data)
+
+  const [ticketCount, setTicketCount] = useState({});
 
   const onCloseTicketModal = () => {
     setTicketUpdateModal(false)
@@ -72,6 +74,8 @@ function Admin() {
       if (response.status === 200) {
         console.log(response);
         setTicketList(response.data);
+        // counting the tickets : recieving the data 
+        updateTicketsCount(response.data);
       }
     }).catch((error) => {
       console.log(error);
@@ -79,15 +83,16 @@ function Admin() {
     })
   }
 
-// read the existing values
+  // read the existing values
 
   const editTicket = (ticketDetail) => {
+
     const ticket = {
       assignee: ticketDetail.assignee,
-      description: ticketDetail.description, 
+      description: ticketDetail.description,
       id: ticketDetail.id,
       reporter: ticketDetail.reporter,
-      status: ticketDetail.status, 
+      status: ticketDetail.status,
       ticketPriority: ticketDetail.ticketPriority,
       title: ticketDetail.title
     }
@@ -96,7 +101,7 @@ function Admin() {
     // storing the existing values that we grabbed in a state
     setSelectedCurrTicket(ticket);
     // open a modal 
-    setTicketUpdateModal(true); 
+    setTicketUpdateModal(true);
 
 
 
@@ -110,20 +115,25 @@ function Admin() {
   // read the updated value from the user 
 
   const onTicketUpdate = (e) => {
-    if(e.target.name === "title") {
+    if (e.target.name === "title") {
       selectedCurrTicket.title = e.target.value
     }
     // else if(e.target.name === "description") {
     //   selectedCurrTicket.description = e.target.value
     // }
-   
+
 
     // title: testing1
     // title: Utkarshini
 
-      // create a new object wit new values ==> object.assign 
-      // (target, source) target : new values , source : destination where you want your updated values 
+    // create a new object wit new values ==> object.assign 
+    // (target, source) target : new values , source : destination where you want your updated values 
+
+    // let newValues =  Object.assign({}, selectedCurrTicket) ==> {}
     updateSelectedCurrTicket(Object.assign({}, selectedCurrTicket))
+
+  // const updateSelectedCurrTicket = (data) => setSelectedCurrTicket(data)
+
 
   }
 
@@ -138,6 +148,30 @@ function Admin() {
       console.log(error);
     })
   }
+ 
+
+  // count the tickets
+
+  const updateTicketsCount = (tickets) => {
+    const data = {
+      pending: 0,
+      closed: 0,
+      open: 1,
+      blocked: 0
+    }
+    tickets.forEach(x => {
+      if (x.status === "OPEN")
+        data.open += 1
+      else if(x.status === "IN_PROGRESS") 
+        data.pending +=1
+
+    })
+    setTicketCount(Object.assign({}, data))
+
+  }
+
+  console.log(ticketCount);
+
 
 
 
@@ -167,20 +201,20 @@ function Admin() {
         <p className="text-muted text-center">Take a quick look at your stats below</p>
 
         {/* STATS CARDS START HERE */}
-        <div className="row my-5 mx-2 text-center">
-          <div className="col my-1 p-2 ">
-            <div className="card bg-primary bg-opacity-25 " style={{ width: 12 + 'rem' }}>
-              <div className="cardbody borders-b">
+        <div className="row container my-5 mx-2 text-center">
+          <div className="col my-1 p-2">
+            <div className="borders-b card bg-primary bg-opacity-25 p-2" style={{ width: 12 + 'rem' }}>
+              <div className="cardbody">
                 <h5 className="card-subtitle">
                   <i className="bi bi-pen text-primary mx-2"></i>
                   OPEN
                 </h5>
                 <hr />
                 <div className="row">
-                  <div className="col">8</div>
+                  <div className="col">{ticketCount.open}</div>
                   <div className="col">
                     <div style={{ height: 30, width: 30 }}>
-                      <CircularProgressbar value={80}
+                      <CircularProgressbar value={ticketCount.open}
                         styles={buildStyles({
                           textColor: "blue",
                           pathColor: "darkBlue",
@@ -204,7 +238,7 @@ function Admin() {
 
           <MaterialTable
 
-          onRowClick={(event, ticketDetail)=> editTicket(ticketDetail)}
+            onRowClick={(event, ticketDetail) => editTicket(ticketDetail)}
 
             data={ticketList}
 
@@ -247,6 +281,7 @@ function Admin() {
             ]}
 
             options={{
+              filtering: true,
               exportMenu: [{
                 label: 'Export Pdf',
                 exportFunc: (cols, datas) => ExportPdf(cols, datas, 'Ticket Records')
@@ -274,32 +309,32 @@ function Admin() {
 
           {ticketUpdateModal ? (
             <Modal
-            show={ticketUpdateModal}
-            onHide={onCloseTicketModal}
-            backdrop="static"
-            centered >
-            <Modal.Header closeButton>
-              <Modal.Title>Update Ticket</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <form onSubmit={updateTicket}>
-                <div className="p-1">
-                  <h5 className="text-primary">Ticket ID :{selectedCurrTicket.id}</h5>
-                  <div className="input-group">
-                    <label className="label input-group-text label-md"> Title 
-                      
-                    </label>
-                    <input type="text" className="form-control" name="title" value={selectedCurrTicket.title} onChange={onTicketUpdate} />
-  
-                  </div>
-                  <Button type="submit" className="my-1">Update </Button>
-                </div>
-              </form>
-            </Modal.Body>
-  
-          </Modal>
+              show={ticketUpdateModal}
+              onHide={onCloseTicketModal}
+              backdrop="static"
+              centered >
+              <Modal.Header closeButton>
+                <Modal.Title>Update Ticket</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <form onSubmit={updateTicket}>
+                  <div className="p-1">
+                    <h5 className="text-primary">Ticket ID :{selectedCurrTicket.id}</h5>
+                    <div className="input-group">
+                      <label className="label input-group-text label-md"> Title
 
-          ) : ("") }
+                      </label>
+                      <input type="text" className="form-control" name="title" value={selectedCurrTicket.title} onChange={onTicketUpdate} />
+
+                    </div>
+                    <Button type="submit" className="my-1">Update </Button>
+                  </div>
+                </form>
+              </Modal.Body>
+
+            </Modal>
+
+          ) : ("")}
 
           <MaterialTable
             //  onRowClick={(rowData, userId)=> fetchUsers(rowData.userId) }
@@ -376,7 +411,7 @@ function Admin() {
 
         <button className="btn btn-primary" onClick={showUserModal}>Open Modal</button>
 
-        
+
 
       </div>
     </div>

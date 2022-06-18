@@ -12,9 +12,11 @@ const Sidebar = () => {
                 <CNavTitle className="">
                     A CRM App for all your needs...
                 </CNavTitle>
-                <CNavItem className="d-flex">
+                <CNavItem className="d-flex"> 
                     <i className="bi bi-box-arrow-left m-2"></i>
                     <div className="mx-5 my-1">Logout</div>
+                    
+                  
                 </CNavItem>
 
             </CSidebarNav>
