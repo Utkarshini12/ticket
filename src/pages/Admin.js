@@ -9,6 +9,19 @@ import { fetchTicket, ticketUpdation } from "../Api/tickets";
 import "../styles/admin.css"
 import { getAllUsers } from "../Api/user";
 
+
+
+// Psuedo code for put logic 
+//  read the data ==> (ticket) => setState(ticket)
+// grab the new Values ==> (data) => setState(data)
+// call the api => function(id, data)
+
+
+const logoutFn = () => {
+  localStorage.clear();
+  window.location.href = "/";
+}
+
 function Admin() {
   const [userModal, setUserModal] = useState(false);
   const [ticketList, setTicketList] = useState([]);
@@ -26,6 +39,7 @@ function Admin() {
   const updateSelectedCurrTicket = (data) => setSelectedCurrTicket(data)
 
   const [ticketCount, setTicketCount] = useState({});
+  const [message, setMessage] = useState("");
 
   const onCloseTicketModal = () => {
     setTicketUpdateModal(false)
@@ -63,6 +77,7 @@ function Admin() {
       }
     }).catch((error) => {
       console.log(error);
+      logoutFn()
 
     })
   }
@@ -78,7 +93,9 @@ function Admin() {
         updateTicketsCount(response.data);
       }
     }).catch((error) => {
-      console.log(error);
+      logoutFn();
+      // console.log(error);
+      setMessage(error)
 
     })
   }
@@ -97,7 +114,7 @@ function Admin() {
       title: ticketDetail.title
     }
 
-    console.log(ticket);
+    console.log("CURR_TICKET", ticket);
     // storing the existing values that we grabbed in a state
     setSelectedCurrTicket(ticket);
     // open a modal 
@@ -142,10 +159,12 @@ function Admin() {
   const updateTicket = (e) => {
     e.preventDefault();
     ticketUpdation(selectedCurrTicket.id, selectedCurrTicket).then(function (response) {
-      console.log("Ticket updated successfully");
+      // console.log("Ticket updated successfully");
+      setMessage("Ticket updated successfully!");
       onCloseTicketModal();
     }).catch(function (error) {
       console.log(error);
+      logoutFn();
     })
   }
  
@@ -156,7 +175,7 @@ function Admin() {
     const data = {
       pending: 0,
       closed: 0,
-      open: 1,
+      open: 0,
       blocked: 0
     }
     tickets.forEach(x => {
@@ -167,10 +186,11 @@ function Admin() {
 
     })
     setTicketCount(Object.assign({}, data))
+    console.log(data);
 
   }
 
-  console.log(ticketCount);
+  console.log("*****", ticketCount);
 
 
 
@@ -197,7 +217,7 @@ function Admin() {
         <Sidebar />
       </div>
       <div className="container col m-1">
-        <h3 className="text-primary text-center">Welcome Admin</h3>
+        <h3 className="text-primary text-center">Welcome {localStorage.getItem("name")}</h3>
         <p className="text-muted text-center">Take a quick look at your stats below</p>
 
         {/* STATS CARDS START HERE */}
@@ -235,6 +255,7 @@ function Admin() {
 
         <hr />
         <div className="container">
+          <h6 className="text-center">{message}</h6>
 
           <MaterialTable
 

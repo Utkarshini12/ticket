@@ -2,6 +2,7 @@ import Login from "./pages/Login";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Suspense } from "react";
 import Admin from "./pages/Admin";
+// const Admin = React.lazy(()=> import("./pages/Admin"))
 import RequireAuth from "./component/RequireAuth";
 import Engineer from "./pages/Engineer";
 import Customer from "./pages/Customer";
@@ -34,12 +35,16 @@ function App() {
           }
         />
         <Route path="unauthorized" element={<Unauthorized />} />
-          {/* <Route element={<RequireAuth allowedRoles={[ROLES.ADMIN]} />}> */}
+        {/* ROLES.ADMIN ====  [ADMIN] */}
+          <Route element={<RequireAuth allowedRoles={[ROLES.ADMIN]} />}>  
             <Route path="/admin" exact element={<Admin />} />
-          {/* </Route> */}
+          </Route>
+          {/* ROLES>CUSTOER === [CUSTOMER]   */}
           <Route element={<RequireAuth allowedRoles={[ROLES.CUSTOMER]} />}>
             <Route path="/customer" element={<Customer />} />
           </Route>
+
+          {/* ROLES.ENINEER === ENGINEER */}
           <Route element={<RequireAuth allowedRoles={[ROLES.ENGINEER]} />}>
             <Route path="/engineer" element={<Engineer />} />
           </Route>

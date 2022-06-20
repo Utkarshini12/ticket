@@ -49,7 +49,8 @@ function Login() {
         if (error.response.status === 400) {
           setMessage(error.response.data.message);
         } else {
-          console.log(error);
+          // console.log(error);
+          setMessage(error);
         }
       });
   };
@@ -93,6 +94,8 @@ function Login() {
           setMessage(error.response.data.message);
         } else {
           console.log(error);
+          setMessage(error.resonse.data.message);
+
         }
       });
   };
