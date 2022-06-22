@@ -71,7 +71,7 @@ function Login() {
     userSignin(data)
       .then(function (response) {
         console.log(response);
-        if (response.status === 200) {
+        
           //userId, email, userType, userStatis, token
           localStorage.setItem("name", response.data.name);
           localStorage.setItem("userId", response.data.userId);
@@ -87,7 +87,7 @@ function Login() {
           } else {
             history("/admin");
           }
-        }
+        
       })
       .catch(function (error) {
         if (error.response.status === 400) {

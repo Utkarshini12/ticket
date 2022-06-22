@@ -52,13 +52,13 @@ function Admin() {
     setUserModal(false)
   }
 
-  useEffect(() => {
-    (async () => {
-      fetchTickets()
-      fetchUsers()
-    })()
+  // useEffect(() => {
+  //   (async () => {
+  //     fetchTickets()
+  //     fetchUsers()
+  //   })()
 
-  }, [])
+  // }, [])
 
 
   // user logic 
@@ -77,7 +77,7 @@ function Admin() {
       }
     }).catch((error) => {
       console.log(error);
-      logoutFn()
+      // logoutFn()
 
     })
   }
@@ -93,7 +93,7 @@ function Admin() {
         updateTicketsCount(response.data);
       }
     }).catch((error) => {
-      logoutFn();
+      // logoutFn();
       // console.log(error);
       setMessage(error)
 
@@ -134,6 +134,8 @@ function Admin() {
   const onTicketUpdate = (e) => {
     if (e.target.name === "title") {
       selectedCurrTicket.title = e.target.value
+    } else if (e.target.name === "assignee") {
+      selectedCurrTicket.assignee = e.target.value
     }
     // else if(e.target.name === "description") {
     //   selectedCurrTicket.description = e.target.value
@@ -164,7 +166,7 @@ function Admin() {
       onCloseTicketModal();
     }).catch(function (error) {
       console.log(error);
-      logoutFn();
+      // logoutFn();
     })
   }
  
@@ -191,6 +193,11 @@ function Admin() {
   }
 
   console.log("*****", ticketCount);
+
+
+  // const deleteEntry =(data) => {
+  //   removeEntry(data);
+  // }
 
 
 
@@ -301,6 +308,14 @@ function Admin() {
               }
             ]}
 
+            // actions={[
+            //   {
+            //     icon:Delete,
+            //     tooptip: "Delete entry",
+            //     onClick: (event, rowData) => deleteEntry(rowdata)
+            //   }
+            // ]}
+
             options={{
               filtering: true,
               exportMenu: [{
@@ -348,6 +363,25 @@ function Admin() {
                       <input type="text" className="form-control" name="title" value={selectedCurrTicket.title} onChange={onTicketUpdate} />
 
                     </div>
+                    <div className="input-group">
+                      <label className="label input-group-text label-md"> Assignee
+                      </label>
+                      <select value={selectedCurrTicket.assignee} onChange={onTicketUpdate} name="assignee">
+                        {/* we want the full user list printed ere so that we can assign the new user 
+                            - The user List is coming from the getUsers api ===> userDetails
+                            - We only want to print engineers 
+                        */}
+
+                        {
+                          userDetails.map((e, i)=> {
+                            if(e.userTypes === "ENGINEER") 
+                            return <option key={i} value={e.value}>{e.name}</option>
+                          })
+                        }
+
+                      </select>
+                    </div>
+
                     <Button type="submit" className="my-1">Update </Button>
                   </div>
                 </form>
