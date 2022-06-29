@@ -1,69 +1,75 @@
 import React, { useState } from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
-import { userSignup, userSignin } from "../Api/auth";
+import { userSignup, userSignin } from "../api/auth";
 import { useNavigate } from 'react-router-dom';
 
 function Login() {
-  const [signUp, setshowsignUp] = useState(false);
-  const [userType, setuserType] = useState("CUSTOMER");
-  const [userSignupData, setUserSignupData] = useState({});
+  const [showSignup, setShowSignup] = useState(false);
   const [message, setMessage] = useState("");
-  const toggleSignUp = () => {
-    setshowsignUp(!signUp);
-  };
 
-  const handleSelect = (e) => {
-    setuserType(e);
-  };
+  const [userId, setUserId] = useState("")
+  const [userPassword, setUserPassword] = useState("")
+  const [userName, setUserName] = useState("")
+  const [userEmail, setUserEmail] = useState("")
+  const [userType, setUserType] = useState("CUSTOMER")
+  const [error, setError] = useState(false)
 
-  const updateSignupData = (e) => {
-    userSignupData[e.target.id] = e.target.value;
-    console.log(userSignupData);
-  };
+  const navigate = useNavigate();
+
+ 
 
   const signupFn = (e) => {
-    const username = userSignupData.username;
-    const userId = userSignupData.userId;
-    const email = userSignupData.email;
-    const password = userSignupData.password;
-
-
     const data = {
-      name: username,
+      name: userName,
       userId: userId,
-      email: email,
-      userTypes: userType,
-      password: password,
-    };
+      email: userEmail,
+      userType: userType,
+      password: userPassword
+  };
+
+
     console.log("DATA", data);
 
     e.preventDefault();
 
-    userSignup(data)
-      .then(function (response) {
-        if (response === 201) {
-          history(0);
-        }
-      })
-      .catch(function (error) {
-        if (error.response.status === 400) {
-          setMessage(error.response.data.message);
-        } else {
-          // console.log(error);
-          setMessage(error);
-        }
-      });
+    userSignin(data).then(function (response) {
+      if (response.status === 200) {
+          if (response.data.message) {
+              setError(true)
+              setMessage(response.data.message)
+          }
+          else {
+              localStorage.setItem("name", response.data.name)
+              localStorage.setItem("userId", response.data.userId);
+              localStorage.setItem("email", response.data.email);
+              localStorage.setItem("userTypes", response.data.userTypes);
+              localStorage.setItem("userStatus", response.data.userStatus);
+              localStorage.setItem("token", response.data.accessToken);
+              if (response.data.userTypes === "CUSTOMER")
+                  history('/customer');
+              else if ((response.data.userTypes === "ENGINEER"))
+                  history('/engineer'); 
+              else
+                  history('/admin');          
+              }
+      }
+      clearState()
+  })
+  .catch(function (error) {
+        setError(true)
+        setMessage(error.response.data.message);
+
+  });
   };
   const history = useNavigate();
 
   const loginFn = (e) => {
+
     
-    const userId = userSignupData.userId;
-    const password = userSignupData.password;
 
     const data = {
       userId: userId,
-      password: password,
+      password: userPassword,
     };
     console.log("DATA", data);
     e.preventDefault();
@@ -71,23 +77,23 @@ function Login() {
     userSignin(data)
       .then(function (response) {
         console.log(response);
-        
-          //userId, email, userType, userStatis, token
-          localStorage.setItem("name", response.data.name);
-          localStorage.setItem("userId", response.data.userId);
-          localStorage.setItem("email", response.data.email);
-          localStorage.setItem("userTypes", response.data.userTypes);
-          localStorage.setItem("userStatus", response.data.userStatus);
-          localStorage.setItem("token", response.data.accessToken);
 
-          if (response.data.userTypes === "CUSTOMER") {
-            history("/customer");
-          } else if (response.data.userTypes === "ENGINEER") {
-            history("/engineer");
-          } else {
-            history("/admin");
-          }
-        
+        //userId, email, userType, userStatis, token
+        localStorage.setItem("name", response.data.name);
+        localStorage.setItem("userId", response.data.userId);
+        localStorage.setItem("email", response.data.email);
+        localStorage.setItem("userTypes", response.data.userTypes);
+        localStorage.setItem("userStatus", response.data.userStatus);
+        localStorage.setItem("token", response.data.accessToken);
+
+        if (response.data.userTypes === "CUSTOMER") {
+          history("/customer");
+        } else if (response.data.userTypes === "ENGINEER") {
+          history("/engineer");
+        } else {
+          history("/admin");
+        }
+
       })
       .catch(function (error) {
         if (error.response.status === 400) {
@@ -100,12 +106,48 @@ function Login() {
       });
   };
 
+  const updateSignupData = (e) => {
+    setMessage("")
+    if(e.target.id === "userId")
+      setUserId(e.target.value)
+    else if(e.target.id === "password")
+      setUserPassword(e.target.value)
+    else if(e.target.id === "password")
+      setUserPassword(e.target.value)
+    else if(e.target.id === "username")
+      setUserName(e.target.value)
+    else
+      setUserEmail(e.target.value)
+  };
+
+  const toggleSignup = () => {
+    clearState();
+    setShowSignup(!showSignup);
+
+  }
+
+  const handleSelect = (e) => {
+    setUserType(e)
+
+  }
+
+  const clearState = () => {
+    setMessage("")
+    setError(false)
+    setUserId("")
+    setUserPassword("")
+    setUserName("")
+    setUserEmail("")
+
+
+  }
+
   return (
     <div className="bg-primary d-flex justify-content-center align-items-center vh-100">
       <div className="card m-5 p-5">
         <div className="row">
           <div className="col">
-            {!signUp ? (
+            {!showSignup ? (
               <div className="login">
                 <form onSubmit={loginFn}>
                   <h4 className="text-center p-3"> Login</h4>
@@ -128,7 +170,7 @@ function Login() {
                   </button>
                   <div
                     className="text-center text-info"
-                    onClick={() => toggleSignUp()}
+                    onClick={() => toggleSignup()}
                   >
                     Not a member? Signup
                   </div>
@@ -190,7 +232,7 @@ function Login() {
                   </button>
                   <div
                     className="text-center text-info"
-                    onClick={() => toggleSignUp()}
+                    onClick={() => toggleSignup()}
                   >
                     Already a member? Login
                   </div>

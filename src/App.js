@@ -55,3 +55,23 @@ function App() {
 }
 
 export default App;
+
+
+
+/*
+
+API FETCHING FLOW  
+
+
+ Step 1 : get all the necessary keys in place : .env, url, 
+          REACT_APP_SERVER_URL= https://relevel-crm--backend.herokuapp.com
+ 2.1:GET Fetch the api and get the results in console. 
+           axios.get ==> .then ==> log the response
+ 2.2: POST, send the data to the api and log the response in console
+            axios.post ==> grab the values from UI ==> .then ==> log the response
+ 2.3: PUT, Grab the curr value, store it -- print the curr values, grab the new values and send the new values to the api 
+ 2.4: DELETE, .remove() 
+            axios.delete ==> .remove ==> .then ==> log the reponse 
+ 3. Map theough the array of objects and print it list 
+ 4. To work on the UI/Ux
+*/
