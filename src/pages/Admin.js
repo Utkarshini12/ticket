@@ -20,14 +20,15 @@ const logoutFn=()=>{
       window.location.href ="/"
   }
 
-
 function Admin() {    
+   
         const [userList, setUserList] = useState([]);
         const [userDetail, setUserDetail] = useState({});
           // old values
         const [ticketDetails, setTicketDetails] = useState([]);
         const [ticketUpdateModal, setTicketUpdateModal] = useState(false);
          // new updated values 
+
         const [selectedCurrTicket, setSelectedCurrTicket] = useState({});
          // {new Obj } new values user 
   // First update with selectedCurr Ticket ==> grab the specific row  ==> CURR VALUE 
@@ -72,7 +73,8 @@ function Admin() {
  // ticket logic 
         const fetchTickets = () => {
             fetchTicket().then(function (response) {
-                if (response.status === 200) {                    
+                if (response.status === 200) {     
+                    console.log(response);               
                       setTicketDetails(response.data);
                       updateTicketCounts(response.data);
                       

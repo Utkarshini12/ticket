@@ -32,34 +32,25 @@ function Login() {
 
     e.preventDefault();
 
-    userSignin(data).then(function (response) {
-      if (response.status === 200) {
-          if (response.data.message) {
-              setError(true)
-              setMessage(response.data.message)
-          }
-          else {
-              localStorage.setItem("name", response.data.name)
-              localStorage.setItem("userId", response.data.userId);
-              localStorage.setItem("email", response.data.email);
-              localStorage.setItem("userTypes", response.data.userTypes);
-              localStorage.setItem("userStatus", response.data.userStatus);
-              localStorage.setItem("token", response.data.accessToken);
-              if (response.data.userTypes === "CUSTOMER")
-                  history('/customer');
-              else if ((response.data.userTypes === "ENGINEER"))
-                  history('/engineer'); 
-              else
-                  history('/admin');          
-              }
-      }
-      clearState()
-  })
-  .catch(function (error) {
-        setError(true)
-        setMessage(error.response.data.message);
-
-  });
+    
+    userSignup(data).then(function (response) {
+            if (response.status === 201) {
+              setShowSignup(false)
+              clearState()
+              setError(false)
+              setMessage("User Signed Up Successfully...")
+            }
+        })
+        .catch(function (error) {
+            if(error.response.status===400)
+            {
+                setError(true)
+                setMessage(error.response.data.message);
+            
+                }    
+            else
+                console.log(error);
+        });
   };
   const history = useNavigate();
 
