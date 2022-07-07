@@ -40,9 +40,11 @@ function App() {
             <Route path="/admin" exact element={<Admin />} />
           </Route>
           {/* ROLES>CUSTOER === [CUSTOMER]   */}
-          {/* <Route element={<RequireAuth allowedRoles={[ROLES.CUSTOMER]} />}> */}
+          <Route element={<RequireAuth allowedRoles={[ROLES.CUSTOMER]} />}>
             <Route path="/customer" element={<Customer />} />
-          {/* </Route> */}
+            {/* <Route path="/creteTicket" element={<CreatTicket />} /> */}
+          </Route>
+         
 
           {/* ROLES.ENINEER === ENGINEER */}
           <Route element={<RequireAuth allowedRoles={[ROLES.ENGINEER]} />}>

@@ -1,4 +1,5 @@
 import { CSidebar, CSidebarNav, CNavTitle, CNavItem } from "@coreui/react";
+import { Link } from "react-router-dom";
 
 
 const Sidebar = () => {
@@ -8,6 +9,14 @@ const Sidebar = () => {
         window.location.href = "/"; 
 
     }
+
+    // const userType = localStorage.getItem("userType")
+
+    // if(userType === 'CUSTOMER') {
+    //     return (
+
+    //     )
+    // }
     return (
         <CSidebar unfoldable className="bg-black vh-100">
             <CSidebarNav>
@@ -20,16 +29,15 @@ const Sidebar = () => {
                 </CNavTitle>
                 <CNavItem className="d-flex">
                     <i className="bi bi-box-arrow-left m-2"></i>
+                    <Link to="/admin" className="text-decoration-none"><span className="mx-5 my-1">Home</span></Link>
+                  
+                </CNavItem>
+                <CNavItem className="d-flex">
+                    <i className="bi bi-box-arrow-left m-2"></i>
                     <span className="mx-5 my-1" onClick={logoutFn}>Logout</span>
                 </CNavItem>
-                <CNavItem className="d-flex">
-                    <i className="bi bi-box-arrow-left m-2"></i>
-                    <span className="mx-5 my-1" onClick={logoutFn}>Tickets</span>
-                </CNavItem>
-                <CNavItem className="d-flex">
-                    <i className="bi bi-box-arrow-left m-2"></i>
-                    <span className="mx-5 my-1" onClick={logoutFn}>Users</span>
-                </CNavItem>
+               
+               {/* {usertype && ()} */}
 
             </CSidebarNav>
 
