@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@auth0/auth0-react": "^1.10.2",
     "@coreui/coreui": "^4.1.6",
     "@coreui/react": "^4.2.2",
     "@material-table/core": "^5.0.2",
