@@ -108,6 +108,7 @@ function User() {
         }
          // call the api 
         ticketCreation(data).then(function (response){
+            // status == 201
             setMessage("Ticket Created Successfully");
             closeTicketCreationModal();
             fetchTickets();

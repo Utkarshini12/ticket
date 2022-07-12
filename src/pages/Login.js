@@ -2,6 +2,26 @@ import React, { useState } from "react";
 import { DropdownButton, Dropdown } from "react-bootstrap";
 import { userSignup, userSignin } from "../api/auth";
 import { useNavigate } from 'react-router-dom';
+import axios from "axios";
+// import {useAuth0} from '@auth0/auth0-react'
+
+
+// data ==> Autho server
+async function authSignup(data) {
+  return await axios.post("base_URL/crm/api/v1/authsignin", data)
+
+  // expected returned data 
+ 
+    // name: userName,
+    // userId: userId,
+    // email: userEmail,
+    // userType: userType,
+    // userStatus: userStatus
+    // token: accessToken
+
+}
+
+
 
 function Login() {
   const [showSignup, setShowSignup] = useState(false);
@@ -12,7 +32,48 @@ function Login() {
   const [userName, setUserName] = useState("")
   const [userEmail, setUserEmail] = useState("")
   const [userType, setUserType] = useState("CUSTOMER")
-  const [error, setError] = useState(false)
+  const [error, setError] = useState(false); 
+
+
+
+
+
+  // user = data from auth0 server, isAuthenticated = true/false value for validation of user 
+  // const {loginWithRedirect, user, isAuthenticated} = useAuth0(); 
+
+  // async function authSignup(data) {
+  //   return await axios.post("base_URL/crm/api/v1/authsignin", data)
+  
+  //   // expected returned data 
+   
+  //     // name: userName, // userId: userId,// email: userEmail,// userType: userType,
+  //     // userStatus: userStatus // token: accessToken
+  
+  // }
+
+
+  // const checkAuth = () => {
+  //   if(isAuthenticated) {
+  //     authSignup(user).then(function(response){
+  //       if(response.status === 200) {
+  //         setMessage("user logged in successfully")
+  //         localStorage.setItem("name", response.data.name);
+  //         localStorage.setItem("userId", response.data.userId);
+  //         localStorage.setItem("email", response.data.email);
+  //         localStorage.setItem("userTypes", response.data.userTypes);
+  //         localStorage.setItem("userStatus", response.data.userStatus);
+  //         localStorage.setItem("token", response.data.accessToken);
+  //       } else {
+  //         console.log(response.data.message);
+         
+  //       }
+  //     }).catch(function(error){
+  //       console.log(error);
+  //     })
+
+  //   }
+
+  // }
 
   const navigate = useNavigate();
 
@@ -34,6 +95,7 @@ function Login() {
 
     
     userSignup(data).then(function (response) {
+
             if (response.status === 201) {
               setShowSignup(false)
               clearState()
